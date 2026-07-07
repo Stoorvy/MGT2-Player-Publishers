@@ -16,10 +16,16 @@ IF you know how to install BepInEx (or you already have it) install PlayerPublis
 
 ## Notes
 
-What is **Stoorvy Stuff**?
+If you encounter any bugs relating this mod please write a comment about it. I only tested this with 2 players but it should work with any number of players.
+
+### What is **Stoorvy Stuff**?
 - I added myself as a company in the mod. If you don't want that you can just install without Stoorvy stuff versions.
 
-If you encounter any bugs relating this mod please write a comment about it. I only tested this with 2 players but it should work with any number of players.
+### Why does it say payment 0$ in publisher menu?
+- Because once you click to a player publisher you'll see a menu and you can offer any amount you want.
+
+### How does profit share work?
+- Publisher automaticly pays set percent of profit every week. Developer will see a message like "<Player> sent you 10000$". Mod uses game's sending money feature to process this.
 
 ## Dependencies
 
