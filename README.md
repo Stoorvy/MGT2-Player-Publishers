@@ -28,8 +28,8 @@ If you encounter any bugs relating this mod please write a comment about it. I o
 
 ## Screenshots
 
-![Offer Menu](screenshots/offermenu.png)
+![Offer Menu](screenshots/OfferMenu.png)
 
-![Offer List](screenshots/offerlist.png)
+![Offer List](screenshots/OfferList.png)
 
-![Player Publisher](screenshots/playerpublisher.png)
+![Player Publisher](screenshots/PlayerPublisher.png)
