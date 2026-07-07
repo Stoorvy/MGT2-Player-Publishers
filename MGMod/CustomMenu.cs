@@ -366,9 +366,9 @@ namespace MGMod
                     {
                         mS.mpCalls_.CLIENT_Send_Game(theGame);
                     }
-                    theGame.SetPublisher(pubID);
                 }
 
+                theGame.SetPublisher(pubID);
                 SendPublisherOffer.SendPublishOfferMessage(theGame, mS.mpCalls_.isServer, pubID, kar, garanti);
 
                 bool gelenMi = false;
@@ -418,6 +418,9 @@ namespace MGMod
                         UnityEngine.Object.Destroy(offer.task.gameObject);
                     }
                 }
+
+                mS.publishingOfferMain_.amountPublishingOffers--;
+                mS.publishingOfferMain_.UpdateGUI();
 
                 Debug.Log($"Teklif kabul edildi Garanti={gelenGaranti} Kar={gelenKar}%");
                 sfxScript_.PlaySound(3, true);

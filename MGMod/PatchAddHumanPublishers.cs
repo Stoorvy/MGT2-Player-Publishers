@@ -28,7 +28,14 @@ namespace MGMod
 
                 var pub = obj.GetComponent<publisherScript>();
 
-                bool listingSelf = MGMod.DebugMode.Value || pub.myID == mS_.myID;
+                bool listingSelf = true;
+                if(pub.myID == mS_.myID)
+                {
+                    if (MGMod.DebugMode.Value)
+                        listingSelf = true;
+                    else
+                        listingSelf = false;
+                }
 
                 if (pub.isPlayer &&
                     listingSelf &&

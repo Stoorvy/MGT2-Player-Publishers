@@ -208,18 +208,21 @@ namespace MGMod
                 __instance.publisherID != mS.myID &&
                 __instance.publisherID >= 100000;
 
+            if(MGMod.DebugMode.Value)
+                humanPub = true;
+
             if (!humanPub)
-                return true;
+                return true; // bizim senaryomuz değil, orijinal InitUI çalışsın
 
             if (__instance.gameTab_)
-                return false;
+                return false; // zaten var, tekrar oluşturma
 
             if (!__instance.isOnMarket && !__instance.schublade)
-                return false;
+                return false; // koşul sağlanmıyor, hiçbir şey yapma
 
-            MethodInfo findScriptsMethod = AccessTools.Method(typeof(mpCalls), "FindScripts");
-
-            findScriptsMethod.Invoke(null, null);
+            // gameScript'in KENDİ private FindScripts()'ini çağır
+            MethodInfo findScriptsMethod = AccessTools.Method(typeof(gameScript), "FindScripts");
+            findScriptsMethod.Invoke(__instance, null);
 
             GameObject obj = Object.Instantiate(
                 __instance.guiMain_.uiPrefabs[11],

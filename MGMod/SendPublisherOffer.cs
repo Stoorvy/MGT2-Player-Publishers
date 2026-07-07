@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
 namespace MGMod
 {
@@ -176,8 +177,6 @@ namespace MGMod
 
             SetOfferData(offerData, new OfferKey(msg.gameID, msg.publisherID));
 
-            var offer = Offers[new OfferKey(msg.gameID, msg.publisherID)];
-
             foreach (var game in mS_.games_.arrayGamesScripts)
             {
                 if (game.myID == msg.gameID)
@@ -185,11 +184,11 @@ namespace MGMod
                     game.SetPublisher(msg.publisherID);
                     if(game.publisherID == mS_.myID)
                     {
-                        mS_.guiMain_.CreateTopNewsInfo($"{game.GetDeveloperName()} sent you an offer!");
+                        mS_.guiMain_.CreateTopNewsInfo($"<color=blue>{game.GetDeveloperName()}</color> sent you an offer!");
                     }
                     else if(game.developerID == mS_.myID)
                     {
-                        mS_.guiMain_.CreateTopNewsInfo($"{game.GetPublisherName()} sent you a counter-offer!");
+                        mS_.guiMain_.CreateTopNewsInfo($"<color=blue>{game.GetPublisherName()}</color> sent you a counter-offer!");
                     }
                     break;
                 }
@@ -225,7 +224,7 @@ namespace MGMod
 
                     guiMain_.ActivateMenu(guiMain_.uiObjects[71]);
                     guiMain_.uiObjects[71].GetComponent<Menu_Dev_XP>().Init(game);
-                    guiMain_.CreateTopNewsInfo($"<color=blue>{game.GetNameSimple()}</color>, published by <color=purple>{game.GetPublisherName()}</color> with {msg.profitShare.ToString()}% profit share!");
+                    guiMain_.CreateTopNewsInfo($"<color=blue>{game.GetNameSimple()}</color>, published by <color=blue>{game.GetPublisherName()}</color> with {msg.profitShare.ToString()}% profit share!");
 
                     break;
                 }
@@ -249,7 +248,7 @@ namespace MGMod
         [HarmonyPatch(typeof(gameScript), nameof(gameScript.SetOnMarket))]
         public static class PatchSetOnMarketTrace
         {
-            static void Prefix(gameScript __instance)
+            static void Postfix(gameScript __instance)
             {
                 var gS_ = __instance;
                 var mS_ = Traverse.Create(__instance).Field("mS_").GetValue<mainScript>();

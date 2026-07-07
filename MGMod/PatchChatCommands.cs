@@ -66,19 +66,30 @@ namespace MGMod
         {
             string[] args = command.Split(' ');
 
+            var guiMain = GameObject.Find("CanvasInGameMenu").GetComponent<GUI_Main>();
+
             switch (args[0].ToLower())
             {
                 case "/help":
                     __instance.AddChat(mS.myID,
                         "[Player Publishers]\n" +
                         "/help: shows this list\n" +
-                        "/debug: activates/deactivates debug mode\n");
+                        "/debug: activates/deactivates debug mode\n" +
+                        "/menu: opens publishing offers menu\n");
                     return false;
 
                 case "/debug":
                     MGMod.DebugMode.Value = !MGMod.DebugMode.Value;
                     __instance.AddChat(mS.myID,
                         "[Player Publishers] Debug: " + (MGMod.DebugMode.Value ? "Active" : "Deactive"));
+                    return false;
+
+                case "/menu":
+                    guiMain.ActivateMenu(guiMain.uiObjects[349]);
+                    guiMain.uiObjects[349].GetComponent<Menu_PublishingOfferSelect>().Init();
+                    guiMain.OpenMenu(false);
+                    __instance.AddChat(mS.myID,
+                        "[Player Publishers] Opened publishing offers menu");
                     return false;
 
                 default:
