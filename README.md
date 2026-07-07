@@ -25,3 +25,11 @@ If you encounter any bugs relating this mod please write a comment about it. I o
 
 - BepInEx 5.4.23.5
 - Harmony
+
+## Screenshots
+
+![Offer Menu](screenshots/offermenu.png)
+
+![Offer List](screenshots/offerlist.png)
+
+![Player Publisher](screenshots/playerpublisher.png)
