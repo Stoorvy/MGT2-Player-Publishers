@@ -25,7 +25,13 @@ If you encounter any bugs relating this mod please write a comment about it. I o
 - Because once you click to a player publisher you'll see a menu and you can offer any amount you want.
 
 ### How does profit share work?
-- Publisher automaticly pays set percent of profit every week. Developer will see a message like "<Player> sent you 10000$". Mod uses game's sending money feature to process this.
+- Publisher automaticly pays set percent of profit every week. Developer will see a message like "Player sent you 10000$". Mod uses game's sending money feature to process this.
+
+### Weekly sells updates after next week
+- On developer's side weekly sells may show different numbers. It'll fix itself after receiving true info from publisher. It keeps updating weekly.
+
+### Updating game and hyping works fine
+- Developer can update and hype the game just fine. Publisher can also hype the game.
 
 ## Dependencies
 
