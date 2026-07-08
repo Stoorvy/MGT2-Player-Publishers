@@ -127,9 +127,9 @@ namespace MGMod
 
             if (theGame.isOnMarket) return;
 
-            if(Offers.TryGetValue(new OfferKey(theGame.myID, pubID), out var offerData))
+            if(Offers.TryGetValue(new OfferKey(theGame.myID, pubID), out var oD))
             {
-                if (offerData.isOnMarket)
+                if (oD.isOnMarket)
                 {
                     return;
                 }
