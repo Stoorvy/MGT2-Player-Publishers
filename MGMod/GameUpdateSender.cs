@@ -75,8 +75,7 @@ namespace MGMod
                 if (game.myID != msg.gameID)
                     continue;
 
-                // Sadece publisher uygulasın.
-                if (game.publisherID != mS_.myID)
+                if (game.publisherID != mS_.myID || game.developerID != mS_.myID)
                     return;
 
                 game.hype = msg.hype;
@@ -143,11 +142,9 @@ namespace MGMod
                 if (mS_ == null)
                     return;
 
-                // Sadece multiplayer
                 if (!mS_.multiplayer)
                     return;
 
-                // İnsan developer + insan publisher
                 if (__instance.developerID < 100000)
                     return;
 
@@ -157,8 +154,7 @@ namespace MGMod
                 if (__instance.developerID == __instance.publisherID)
                     return;
 
-                // Sadece developer göndersin
-                if (mS_.myID != __instance.developerID)
+                if (mS_.myID != __instance.developerID || mS_.myID != __instance.publisherID)
                     return;
 
                 GameUpdateSender.SendGameUpdate(__instance, mS_.mpCalls_.isServer);
