@@ -62,14 +62,14 @@ namespace MGMod
                 offer.gameID = offerData.gameID;
                 offer.developerID = offerData.developerID;
                 offer.publisherID = offerData.publisherID;
-                if (offer.garanti == 0)
+                if (offerData.garanti != 0)
                     offer.garanti = offerData.garanti;
-                if (!offer.gelenMi)
-                    offer.gelenMi = offerData.gelenMi;
-                if (offer.kar == 0)
+                offer.gelenMi = offerData.gelenMi;
+                if (offerData.kar != 0)
                     offer.kar = offerData.kar;
                 if (offer.task == null)
                     offer.task = offerData.task;
+                Debug.Log($"Offer güncellendi: GameID={offer.gameID}, DevID={offer.developerID}, PubID={offer.publisherID}, Garanti={offer.garanti}, Kar={offer.kar}, GelenMi={offer.gelenMi}, Task={offer.task != null}");
             }
             else
             {
@@ -142,7 +142,7 @@ namespace MGMod
 
         public static void ClientOnPublishOffer(PublishOfferMessage msg)
         {
-            UnityEngine.Debug.Log($"PublishOfferMessage geldi. GameID={msg.gameID}");
+            UnityEngine.Debug.Log($"PublishOfferMessage geldi. GameID={msg.gameID} {msg.garanti} {msg.kar} {msg.isSenderDev}");
 
             var mainObj = GameObject.FindWithTag("Main");
             if (!mainObj) return;
@@ -200,7 +200,7 @@ namespace MGMod
 
         public static void ClientOnPublishGame(PublishGameMessage msg)
         {
-            UnityEngine.Debug.Log($"PublishGameMessage geldi. GameID={msg.gameID}");
+            UnityEngine.Debug.Log($"PublishGameMessage geldi. GameID={msg.gameID} DevID={msg.devID}");
 
             var mainObj = GameObject.FindWithTag("Main");
             if (!mainObj) return;
@@ -216,11 +216,15 @@ namespace MGMod
 
                     if (Offers.TryGetValue(new OfferKey(msg.gameID, game.publisherID), out var offer))
                     {
+                        Debug.Log("Offerı buldum.");
                         if(offer.task != null)
                         {
                             UnityEngine.Object.Destroy(offer.task.gameObject);
+                            Debug.Log("Taskı buldum ve sildim.");
                         }
                     }
+
+                    Debug.Log($"{game.GetNameSimple()} {game.reviewTotal} {game.isOnMarket}");
 
                     guiMain_.ActivateMenu(guiMain_.uiObjects[71]);
                     guiMain_.uiObjects[71].GetComponent<Menu_Dev_XP>().Init(game);

@@ -355,9 +355,10 @@ namespace MGMod
                 int garanti = (int)GetGuaranteeValue(garantiInput);
                 float kar = GetProfitValue(karInput);
 
+                theGame.SetPublisher(pubID);
+
                 if (theGame.developerID == mS.myID)
                 {
-                    theGame.SetPublisher(-1);
                     if (mS.mpCalls_.isServer)
                     {
                         mS.mpCalls_.SERVER_Send_Game(theGame);
@@ -368,9 +369,6 @@ namespace MGMod
                     }
                 }
 
-                theGame.SetPublisher(pubID);
-                SendPublisherOffer.SendPublishOfferMessage(theGame, mS.mpCalls_.isServer, pubID, kar, garanti);
-
                 bool gelenMi = false;
                 if (MGMod.DebugMode.Value && theGame.developerID == mS.myID && pubID == mS.myID)
                     gelenMi = true;
@@ -379,13 +377,15 @@ namespace MGMod
                 {
                     gameID = theGame.myID,
                     developerID = theGame.developerID,
-                    publisherID = theGame.publisherID,
+                    publisherID = pubID,
                     kar = kar,
                     garanti = garanti,
                     gelenMi = gelenMi
                 };
 
-                SendPublisherOffer.SetOfferData(offerData, new OfferKey(theGame.myID, theGame.publisherID));
+                SendPublisherOffer.SetOfferData(offerData, new OfferKey(theGame.myID, pubID));
+
+                SendPublisherOffer.SendPublishOfferMessage(theGame, mS.mpCalls_.isServer, pubID, kar, garanti);
 
                 Debug.Log($"Teklif gönderildi Garanti={garanti} Kar={kar}%");
                 sfxScript_.PlaySound(3, true);
@@ -540,12 +540,12 @@ namespace MGMod
                         GameObject.Destroy(gameObject);
                     }
                 }
-                if (garantiField != null || !garatiOK)
+                if (garantiField != null && !garatiOK)
                 {
                     garantiField.onEndEdit.AddListener(OnGarantiEdit);
                     garatiOK = true;
                 }
-                if (karField != null || !karOK)
+                if (karField != null && !karOK)
                 {
                     karField.onEndEdit.AddListener(OnKarEdit);
                     karOK = true;

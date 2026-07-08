@@ -38,7 +38,7 @@ namespace MGMod
             __instance.gameObject.SetActive(false);
             guiMain_.CloseMenu();
 
-            new CustomMenu().CreatePubOfferMenu(gS_.myID, mS_.myID, id_);
+            new CustomMenu().CreatePubOfferMenu(gS_.myID, mS_.myID, offerData.publisherID);
             return false;
         }
     }

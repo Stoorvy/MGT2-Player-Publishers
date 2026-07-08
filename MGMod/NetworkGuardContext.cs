@@ -6,21 +6,64 @@ namespace MGMod
 {
     public static class NetworkGuardContext
     {
-        public static bool InGameSyncGuard = false;
+        public static bool InGameSyncGuard;
+        public static int IncomingDeveloperID;
+        public static int IncomingPublisherID;
     }
 
     // 1) SERVER_Get_Game çalışırken bir "bayrak" aç
     [HarmonyPatch(typeof(mpCalls), "SERVER_Get_Game")]
     public static class Patch_SERVER_Get_Game_Guard
     {
-        static void Prefix()
+        static void Prefix(mpCalls __instance, mpCalls.s_Game msg)
         {
-            NetworkGuardContext.InGameSyncGuard = true;
+            NetworkGuardContext.IncomingPublisherID = msg.publisherID;
+            NetworkGuardContext.IncomingDeveloperID = msg.developerID;
+
+            bool humanPublisherImPub =
+                msg.developerID >= 100000 &&
+                msg.publisherID >= 100000 &&
+                msg.developerID != msg.publisherID &&
+                msg.publisherID == __instance.mS_.myID;
+
+            bool humanPublisherImDev =
+                msg.developerID >= 100000 &&
+                msg.publisherID >= 100000 &&
+                msg.developerID != msg.publisherID &&
+                msg.developerID == __instance.mS_.myID;
+
+            if(msg.isOnMarket && humanPublisherImDev)
+            {
+                NetworkGuardContext.InGameSyncGuard = true;
+            }
+            if(!msg.isOnMarket && humanPublisherImPub)
+            {
+                NetworkGuardContext.InGameSyncGuard = true;
+            }
         }
 
-        static void Postfix()
+        static void Postfix(mpCalls __instance, mpCalls.s_Game msg)
         {
             NetworkGuardContext.InGameSyncGuard = false;
+            NetworkGuardContext.IncomingPublisherID = -1;
+            NetworkGuardContext.IncomingDeveloperID = -1;
+
+            var getGame = AccessTools.Method(typeof(mpCalls), "GetGame");
+
+            var obj = (GameObject)getGame.Invoke(__instance, new object[]
+            {
+            msg.gameID
+            });
+
+            if (obj == null)
+            {
+                Debug.Log("Game bulunamadı");
+                return;
+            }
+
+            var game = obj.GetComponent<gameScript>();
+
+            Debug.Log($"Server Get Game: Game: {game.GetNameSimple()}, Review: {game.reviewTotal}, OnMarket: {game.isOnMarket}, Publisher {game.GetPublisherName()}");
         }
     }
 
@@ -38,12 +81,14 @@ namespace MGMod
             var mS_ = mainObj.GetComponent<mainScript>();
             if (!mS_) return;
 
-            // Ben geliştiriciyim, ama yayıncı BEN değilim ve yayıncı bir insan oyuncu (ID >= 100000)
-            if (__instance.developerID == mS_.myID
-                && __instance.publisherID != mS_.myID
-                && __instance.publisherID >= 100000)
+            bool humanPublisherDeveloperCase =
+                NetworkGuardContext.IncomingDeveloperID >= 100000 &&
+                NetworkGuardContext.IncomingPublisherID >= 100000 &&
+                NetworkGuardContext.IncomingDeveloperID != NetworkGuardContext.IncomingPublisherID;
+
+            if (humanPublisherDeveloperCase)
             {
-                __result = false; // guard'ı atla, güncellemenin işlenmesine izin ver
+                __result = false;
             }
         }
     }
@@ -97,8 +142,11 @@ namespace MGMod
             if (!humanPublisherDeveloperCase)
                 return true;
 
-            // Sadece publisher CLIENT_Send_Game göndersin.
-            return mS_.myID == script_.publisherID;
+            if (script_.isOnMarket)
+            {
+                return mS_.myID == script_.publisherID;
+            }
+            return true;
         }
     }
 
