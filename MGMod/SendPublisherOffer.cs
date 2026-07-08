@@ -24,6 +24,7 @@ namespace MGMod
             public bool gelenMi;
             public float kar;
             public taskGame task;
+            public bool isOnMarket;
         }
 
         public struct OfferKey
@@ -69,7 +70,9 @@ namespace MGMod
                     offer.kar = offerData.kar;
                 if (offer.task == null)
                     offer.task = offerData.task;
-                Debug.Log($"Offer güncellendi: GameID={offer.gameID}, DevID={offer.developerID}, PubID={offer.publisherID}, Garanti={offer.garanti}, Kar={offer.kar}, GelenMi={offer.gelenMi}, Task={offer.task != null}");
+                if(!offer.isOnMarket)
+                    offer.isOnMarket = offerData.isOnMarket;
+                Debug.Log($"Offer güncellendi: GameID={offer.gameID}, DevID={offer.developerID}, PubID={offer.publisherID}, Garanti={offer.garanti}, Kar={offer.kar}, GelenMi={offer.gelenMi}, Task={offer.task != null}, Market={offer.isOnMarket}");
             }
             else
             {
@@ -206,33 +209,45 @@ namespace MGMod
             if (!mainObj) return;
             var mS_ = mainObj.GetComponent<mainScript>();
 
-            if (msg.devID != mS_.myID) return;
+            gameScript gS = null;
 
             foreach (var game in mS_.games_.arrayGamesScripts)
             {
                 if (game.myID == msg.gameID)
                 {
-                    var guiMain_ = mS_.guiMain_;
-
-                    if (Offers.TryGetValue(new OfferKey(msg.gameID, game.publisherID), out var offer))
-                    {
-                        Debug.Log("Offerı buldum.");
-                        if(offer.task != null)
-                        {
-                            UnityEngine.Object.Destroy(offer.task.gameObject);
-                            Debug.Log("Taskı buldum ve sildim.");
-                        }
-                    }
-
-                    Debug.Log($"{game.GetNameSimple()} {game.reviewTotal} {game.isOnMarket}");
-
-                    guiMain_.ActivateMenu(guiMain_.uiObjects[71]);
-                    guiMain_.uiObjects[71].GetComponent<Menu_Dev_XP>().Init(game);
-                    guiMain_.CreateTopNewsInfo($"<color=blue>{game.GetNameSimple()}</color>, published by <color=blue>{game.GetPublisherName()}</color> with {msg.profitShare.ToString()}% profit share!");
-
+                    gS = game;
                     break;
                 }
             }
+
+            SetOfferData(new OfferData { isOnMarket = true }, new OfferKey(msg.gameID, gS.publisherID));
+
+            if (msg.devID != mS_.myID) return;
+
+            if(gS == null)
+            {
+                Debug.Log("Game bulunamadı.");
+                return;
+            }
+
+            var guiMain_ = mS_.guiMain_;
+
+            if (Offers.TryGetValue(new OfferKey(msg.gameID, gS.publisherID), out var offer))
+            {
+                Debug.Log("Offerı buldum.");
+                if (offer.task != null)
+                {
+                    UnityEngine.Object.Destroy(offer.task.gameObject);
+                    Debug.Log("Taskı buldum ve sildim.");
+                }
+            }
+
+            Debug.Log($"{gS.GetNameSimple()} {gS.reviewTotal} {gS.isOnMarket}");
+
+            guiMain_.ActivateMenu(guiMain_.uiObjects[71]);
+            guiMain_.uiObjects[71].GetComponent<Menu_Dev_XP>().Init(gS);
+            guiMain_.CreateTopNewsInfo($"<color=blue>{gS.GetNameSimple()}</color>, published by <color=blue>{gS.GetPublisherName()}</color> with {msg.profitShare.ToString()}% profit share!");
+
         }
 
         public static void ServerOnPublishOffer(NetworkConnectionToClient conn, PublishOfferMessage msg)
@@ -345,6 +360,12 @@ namespace MGMod
                 if (!Offers.TryGetValue(new OfferKey(__instance.game_.myID, __instance.game_.publisherID), out var offer))
                     return true; // NPC teklifi
 
+                if(__instance.game_.isOnMarket || offer.isOnMarket)
+                {
+                    GameObject.Destroy(__instance.gameObject);
+                    return false;
+                }
+
                 __instance.sfx_.PlaySound(3, true);
 
                 new CustomMenu().CreatePubOfferMenu(
@@ -369,7 +390,7 @@ namespace MGMod
                 if (!Offers.TryGetValue(new OfferKey(__instance.game_.myID, __instance.game_.publisherID), out var offer))
                     return true; // NPC teklifleri normal çalışsın
 
-                if (__instance.game_.isOnMarket)
+                if (__instance.game_.isOnMarket || offer.isOnMarket)
                 {
                     GameObject.Destroy(__instance.gameObject);
                     return false;

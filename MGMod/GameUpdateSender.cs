@@ -95,8 +95,7 @@ namespace MGMod
                 if (msg.gameLanguage != null)
                     game.gameLanguage = (bool[])msg.gameLanguage.Clone();
 
-                if (MGMod.DebugMode.Value)
-                    Debug.Log($"GameUpdate applied: {game.GetNameSimple()}");
+                Debug.Log($"GameUpdate applied: {game.GetNameSimple()}");
 
                 break;
             }

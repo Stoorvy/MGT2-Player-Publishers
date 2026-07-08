@@ -127,6 +127,14 @@ namespace MGMod
 
             if (theGame.isOnMarket) return;
 
+            if(Offers.TryGetValue(new OfferKey(theGame.myID, pubID), out var offerData))
+            {
+                if (offerData.isOnMarket)
+                {
+                    return;
+                }
+            }
+
             GameObject menuObj = GameObject.Instantiate(guiMain.uiObjects[350]);
             GameObject inputFieldPrefab = guiMain.uiObjects[17].transform.GetChild(0).GetChild(3).gameObject;
 
