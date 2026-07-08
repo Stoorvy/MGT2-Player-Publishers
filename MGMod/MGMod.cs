@@ -12,7 +12,7 @@ namespace MGMod
     {
         public const string pluginGuid = "com.stoorvy.mgt2.playerPublishers";
         public const string pluginName = "Player Publishers";
-        public const string pluginVersion = "1.0.0.2";
+        public const string pluginVersion = "1.0.0.3";
 
         public static ConfigEntry<bool> DebugMode;
 
