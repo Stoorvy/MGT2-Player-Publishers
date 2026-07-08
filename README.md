@@ -21,6 +21,9 @@ If you encounter any bugs relating this mod please write a comment about it. I o
 ### What is **Stoorvy Stuff**?
 - I added myself as a company in the mod. If you don't want that you can just install without Stoorvy stuff versions.
 
+### I don't have production unlocked how can I check counter-offers?
+- Type /menu in chat.
+
 ### Why does it say payment 0$ in publisher menu?
 - Because once you click to a player publisher you'll see a menu and you can offer any amount you want.
 
